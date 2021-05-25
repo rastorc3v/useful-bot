@@ -9,6 +9,7 @@ from MessageConstructor import get_events_message, start_parsing, get_weather_me
 from Parser import get_event_inf, get_weather_inf
 from Users import check_and_add
 import config
+import environment
 
 # Useful telebot project
 # Read all information about opportunities:
@@ -18,7 +19,8 @@ import config
 print("starting...")
 
 # create telebot instance
-tb = telebot.TeleBot(config.TOKEN)
+token = environment.PROD_TOKEN if environment.IS_PROD else environment.DEV_TOKEN
+tb = telebot.TeleBot(token)
 
 # get emoji for messages
 emoji = get_em()
