@@ -10,25 +10,37 @@ import environment
 import argparse
 from printer import Printer
 
-printer = Printer()
+printer = Printer(' ')
 
-printer.push_context('Starting', "info1")
+printer.push_context('starting', "info1")
+
+printer.info2('parse console args')
 arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument('--dev', type=bool, help='run in development mode')
-
 console_args = arg_parser.parse_args()
-# create telebot instance
-token = environment.DEV_TOKEN if console_args.dev or not environment.IS_PROD else environment.PROD_TOKEN
-tb = telebot.TeleBot(token)
 
-# get emoji for messages
+if console_args.dev:
+    printer.info2('passed dev arg - True')
+
+if console_args.dev or not environment.IS_PROD:
+    printer.info3('development mode')
+    token = environment.DEV_TOKEN
+else:
+    printer.info3('production mode')
+    token = environment.PROD_TOKEN
+
+tb = None
+try:
+    tb = telebot.TeleBot(token)
+except:
+    printer.error('unable to create TeleBot instance')
+    exit(-1)
+printer.info3('bot instance created')
+
 emoji = get_em()
 
-# start parsing data from yandex.by and dev.by
-try:
-    start_parsing(tb)
-except:
-    pass
+start_parsing(tb)
+
 
 # except button click "Events"
 @tb.message_handler(regexp="События")
