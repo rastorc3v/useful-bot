@@ -56,6 +56,12 @@ class Printer:
     def info3(self, text):
         self.log(text, "info3")
 
+    def success(self, text):
+        self.log(text, "success")
+
+    def default(self, text):
+        self.log(text, "default")
+
     def get_color_code(self, color_type):
         try:
             return str(self._COLORS_TYPES[color_type])
