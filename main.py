@@ -7,16 +7,18 @@ from MessageConstructor import get_events_message, start_parsing, get_weather_me
 from Parser import get_event_inf, get_weather_inf
 from Users import check_and_add
 import environment
+import argparse
+from printer import Printer
 
-# Useful telebot project
-# Read all information about opportunities:
-#           github.com/rastorc3v
-# Good luck ! =)
+printer = Printer()
 
-print("starting...")
+printer.push_context('Starting', "info1")
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument('--dev', type=bool, help='run in development mode')
 
+console_args = arg_parser.parse_args()
 # create telebot instance
-token = environment.PROD_TOKEN if environment.IS_PROD else environment.DEV_TOKEN
+token = environment.DEV_TOKEN if console_args.dev or not environment.IS_PROD else environment.PROD_TOKEN
 tb = telebot.TeleBot(token)
 
 # get emoji for messages
