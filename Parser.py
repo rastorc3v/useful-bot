@@ -4,6 +4,12 @@ from bs4 import BeautifulSoup
 import time
 from DatabaseUpdater import vip_users_id_list
 from EmojiGenerator import em
+from threading import Timer
+
+def start_parsing(tb):
+    Timer(0, events_update, (tb,)).start()
+    Timer(0, weather_update, ()).start()
+    Timer(0, update_horoscope, ()).start()
 
 def events_update(tb):
     while True:

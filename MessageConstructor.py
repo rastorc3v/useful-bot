@@ -1,15 +1,11 @@
 from Parser import events_update, weather_update, update_horoscope, get_horoscope
-from threading import Timer
 from EmojiGenerator import get_em, em
 
 emojis = get_em()
 days = ['пн,', 'вт,', 'ср,', 'чт,', 'пт,', 'сб,', 'вс,']
 
 
-def start_parsing(tb):
-    Timer(0, events_update, (tb,)).start()
-    Timer(0, weather_update, ()).start()
-    Timer(0, update_horoscope, ()).start()
+
 
 
 def get_events_message(day, title, org, url, i):
@@ -67,8 +63,7 @@ def get_weather_message(tm, weather, temp, show_param, tb):
 
             show_param = show_param + 1
         return result
-    except (e):
-        print(e)
+    except:
         tb.send_message(827073258, "Бот накрылся!")
         return "Фунция недоступна на данный момент.\nВедутся техниские работы"
 
