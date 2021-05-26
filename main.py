@@ -3,15 +3,14 @@ import telebot
 from telebot import types
 from DatabaseUpdater import get_len_title, superusers_id_list, users_id_list, add_vip, get_chat_id_by_name
 from EmojiGenerator import get_em
-from MessageConstructor import get_events_message, start_parsing, get_weather_message, get_horoscope_message
+from MessageConstructor import get_events_message, get_weather_message, get_horoscope_message
 from Parser import get_event_inf, get_weather_inf
-from Users import check_and_add
 import environment
 import argparse
 from printer import Printer
 from Users import User
-
-printer = Printer(' ')
+from Parser import Parser
+from printer import printer
 
 printer.push_context('starting', "info1")
 
@@ -41,7 +40,8 @@ printer.info3('bot instance created')
 emoji = get_em()
 user = User()
 
-start_parsing(tb)
+parser = Parser()
+
 
 
 @tb.message_handler(regexp="События")

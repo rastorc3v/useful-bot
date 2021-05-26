@@ -5,11 +5,8 @@ import time
 from DatabaseUpdater import vip_users_id_list
 from EmojiGenerator import em
 from threading import Timer
-
-# def start_parsing(tb):
-#     Timer(0, events_update, (tb,)).start()
-#     Timer(0, weather_update, ()).start()
-#     Timer(0, update_horoscope, ()).start()
+from parsers.dev_events import DevEvents
+from printer import printer
 
 def events_update(tb):
     while True:
@@ -175,10 +172,13 @@ def get_horoscope(sign):
 
 class Parser:
     def __init__(self):
-        pass
+        printer.push_context('parse', "info2")
+        self.dev_events = DevEvents()
+        self.parse_events()
 
     def parse_events(self):
-        pass
+        printer.push_context('dev events', "info2")
+        self.dev_events.parse()
 
     def parse_weather(self):
         pass

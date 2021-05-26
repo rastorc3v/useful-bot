@@ -1,11 +1,7 @@
-from Parser import events_update, weather_update, update_horoscope, get_horoscope
+from Parser import get_horoscope
 from EmojiGenerator import get_em, em
-
 emojis = get_em()
 days = ['пн,', 'вт,', 'ср,', 'чт,', 'пт,', 'сб,', 'вс,']
-
-
-
 
 
 def get_events_message(day, title, org, url, i):
