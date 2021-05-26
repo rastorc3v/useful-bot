@@ -9,6 +9,7 @@ from Users import check_and_add
 import environment
 import argparse
 from printer import Printer
+from Users import User
 
 printer = Printer(' ')
 
@@ -38,15 +39,14 @@ except:
 printer.info3('bot instance created')
 
 emoji = get_em()
+user = User()
 
 start_parsing(tb)
 
 
-# except button click "Events"
 @tb.message_handler(regexp="События")
 def handle_get_events(message):
-    check_and_add(message.chat.id, message.chat.first_name, message.chat.last_name, vip=0)
-
+    user.handle_message(message.chat.id, message.chat.first_name, message.chat.last_name, message.text)
     li = get_event_inf()
 
     if not get_len_title():
@@ -58,13 +58,15 @@ def handle_get_events(message):
 
 
 @tb.message_handler(regexp="Погода")
-def handle_get_events(m, param=1):
+def handle_get_events(message, param=1):
+    user.handle_message(message.chat.id, message.chat.first_name, message.chat.last_name, message.text)
     weath_li = get_weather_inf()
-    tb.send_message(m.chat.id, text=get_weather_message(weath_li[0], weath_li[1], weath_li[2], show_param=param, tb=tb))
+    tb.send_message(message.chat.id, text=get_weather_message(weath_li[0], weath_li[1], weath_li[2], show_param=param, tb=tb))
 
 
 @tb.message_handler(regexp=emoji['blizneci'] + " Гороскоп")
-def handle_get_weather(m):
+def handle_get_weather(message):
+    user.handle_message(message.chat.id, message.chat.first_name, message.chat.last_name, message.text)
     markup = types.InlineKeyboardMarkup()
     markup.row_width = 3
     oven = types.InlineKeyboardButton(emoji['oven'] + ' Овен', callback_data='oven')
@@ -80,13 +82,14 @@ def handle_get_weather(m):
     vodoley = types.InlineKeyboardButton(emoji['vodoley'] + 'Водолей', callback_data='vodoley')
     ribi = types.InlineKeyboardButton(emoji['ribi'] + 'Рыбы', callback_data='ribi')
     markup.add(oven, telec, blizneci, rak, lev, deva, vesi, scorpion, strelec, kozerog, vodoley, ribi)
-    tb.send_message(m.chat.id, text="Выберите знак", reply_markup=markup, parse_mode='markdown')
+    tb.send_message(message.chat.id, text="Выберите знак", reply_markup=markup, parse_mode='markdown')
 
 
 @tb.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
     if call.message:
         try:
+            user.handle_message(call.message.chat.id, call.message.chat.first_name, call.message.chat.last_name, call.message.text)
             tb.edit_message_text(chat_id=call.message.chat.id,
                                  message_id=call.message.message_id,
                                  text=get_horoscope_message(call.data),
@@ -97,38 +100,40 @@ def callback_inline(call):
 
 # broadcast режим для массовой рассылки сообщений админами
 @tb.message_handler(regexp="broadcast")
-def broadcast(m):
-    if (m.chat.id,) in superusers_id_list():
+def broadcast(message):
+    if (message.chat.id,) in superusers_id_list():
+        user.handle_message(message.chat.id, message.chat.first_name, message.chat.last_name, message.text, "broadcast")
         for (chats,) in users_id_list():
             # if m.chat.id != chats:
             try:
-                tb.send_message(chats, m.text.lstrip("broadcast"))
+                tb.send_message(chats, message.text.lstrip("broadcast"))
             except:
                 pass
-    print('-----NEW BROADCAST-----\nfrom ' + str(m.chat.first_name) + " " + str(m.chat.last_name) +
-            " chat_id - " + str(m.chat.id) + "\n" + m.text.lstrip("broadcast") + "\n" + str(
+    print('-----NEW BROADCAST-----\nfrom ' + str(message.chat.first_name) + " " + str(message.chat.last_name) +
+            " chat_id - " + str(message.chat.id) + "\n" + message.text.lstrip("broadcast") + "\n" + str(
             str(datetime.datetime.now().date()) + " " + str(datetime.datetime.now().hour) + ":" +
             str(datetime.datetime.now().minute) + ":" + str(datetime.datetime.now().second)) + "\n")
 
 @tb.message_handler(commands=['start', 'update'])
-def start(m):
-    check_and_add(m.chat.id, m.chat.first_name, m.chat.last_name, vip=0)
+def start(message):
+    user.check_and_add(message.chat.id, message.chat.first_name, message.chat.last_name)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     events = types.KeyboardButton(emoji['calendar'] + ' События')
     weath = types.KeyboardButton(emoji['weath'] + ' Погода')
     horoscope = types.KeyboardButton(emoji['blizneci'] + ' Гороскоп')
     markup.add(events, weath, horoscope)
-    tb.send_message(m.chat.id, '''Добро пожаловать в обновлённую версию, **{}**!\n\nЯ самый полезный бот на этой планете!=)\n__Помни что с ВИП 
-аккаунтом открываются новые возможности.'''.format(m.chat.first_name), reply_markup=markup,
+    tb.send_message(message.chat.id, '''Добро пожаловать в обновлённую версию, **{}**!\n\nЯ самый полезный бот на этой планете!=)\n__Помни что с ВИП 
+аккаунтом открываются новые возможности.'''.format(message.chat.first_name), reply_markup=markup,
                     parse_mode='markdown')
 
 
 @tb.message_handler(regexp="send")
-def sender(m):
-    if (m.chat.id,) in superusers_id_list():
-        tb.send_message(m.text.lstrip("send ").split('-')[0], m.text.split('-')[1])
-        print(str(m.chat.first_name) + " " + str(m.chat.last_name) + str(m.chat.id) + "\n" + str(
-            m.text.split('-')[1]) + "\n" + str(
+def sender(message):
+    if (message.chat.id,) in superusers_id_list():
+        user.handle_message(message.chat.id, message.chat.first_name, message.chat.last_name, message.text, "private")
+        tb.send_message(message.text.lstrip("send ").split('-')[0], message.text.split('-')[1])
+        print(str(message.chat.first_name) + " " + str(message.chat.last_name) + str(message.chat.id) + "\n" + str(
+            message.text.split('-')[1]) + "\n" + str(
             str(datetime.datetime.now().date()) + " " + str(datetime.datetime.now().hour) + ":" +
             str(datetime.datetime.now().minute) + ":" + str(datetime.datetime.now().second)) + "\n")
 
