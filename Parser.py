@@ -6,10 +6,10 @@ from DatabaseUpdater import vip_users_id_list
 from EmojiGenerator import em
 from threading import Timer
 
-def start_parsing(tb):
-    Timer(0, events_update, (tb,)).start()
-    Timer(0, weather_update, ()).start()
-    Timer(0, update_horoscope, ()).start()
+# def start_parsing(tb):
+#     Timer(0, events_update, (tb,)).start()
+#     Timer(0, weather_update, ()).start()
+#     Timer(0, update_horoscope, ()).start()
 
 def events_update(tb):
     while True:
@@ -171,3 +171,16 @@ def get_horoscope(sign):
         c = conn.cursor()
         query = "SELECT text FROM horoscope WHERE sign = '{}'".format(sign)
         return list(c.execute(query))[0][0]
+
+class Parser:
+    def __init__(self):
+        pass
+
+    def parse_events(self):
+        pass
+
+    def parse_weather(self):
+        pass
+
+    def parse_horoscope(self):
+        pass
