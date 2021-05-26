@@ -172,6 +172,7 @@ def get_horoscope(sign):
         query = "SELECT text FROM horoscope WHERE sign = '{}'".format(sign)
         return list(c.execute(query))[0][0]
 
+
 class Parser:
     def __init__(self):
         pass
